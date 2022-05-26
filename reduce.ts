@@ -30,3 +30,5 @@ result = reduceRight(testCases, add);
 // nativeResult = testCases.reduce(add);
 result;
 // nativeResult;
+
+export {};
