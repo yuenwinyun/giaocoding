@@ -8,12 +8,20 @@ let testCases = [
 	new Promise((resolve, _) => resolve("resolve 2")),
 ];
 
-allSettled(testCases).then((r) => {
-	r;
-});
+allSettled(testCases)
+	.then((r) => {
+		r;
+	})
+	.catch((e) => {
+		e;
+	});
 
-Promise.all(testCases).then((r) => {
-	r;
-});
+Promise.all(testCases)
+	.then((r) => {
+		r;
+	})
+	.catch((e) => {
+		e;
+	});
 
 export {};
