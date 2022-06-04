@@ -29,12 +29,12 @@ type EffectOptions = {
 };
 // some built-in vue effect to update VNode reactively
 function useEffect(cb: (...args: unknown[]) => unknown, options: EffectOptions = {}) {
-	const effectFn: Effect = () => {
+	const effectFn: Effect = async () => {
 		activeEffect = effectFn;
 		effectStack.push(effectFn);
 		// #5 before executing effects, remove unused effects
 		cleanup(effectFn); // delete all deps before executing side effect
-		const res = cb();
+		const res = await cb();
 		effectStack.pop();
 		activeEffect = effectStack[effectStack.length - 1];
 		return res;
@@ -74,7 +74,7 @@ function track(target: object, key: string | symbol) {
 	deps.add(activeEffect);
 	activeEffect.deps.push(deps);
 }
-function execute(target: object, key: string | symbol) {
+function trigger(target: object, key: string | symbol) {
 	const deps = effectBucket.get(target);
 	if (!deps) return;
 
@@ -101,7 +101,7 @@ function defineReactive<T extends object>(obj: T) {
 		set(target, p, value) {
 			target[p] = value;
 			// #4 when object property has been mutated, execute all side effects in its deps
-			execute(target, p);
+			trigger(target, p);
 			return true;
 		},
 	});
@@ -156,6 +156,7 @@ function computed<T extends {}>(getter: () => T) {
 
 	const obj = {
 		get value() {
+			// compute result again if value is dirty
 			if (dirty) {
 				console.log("called");
 				value = effect() as T;
@@ -166,13 +167,14 @@ function computed<T extends {}>(getter: () => T) {
 		},
 	};
 
+	// lazy computed
 	const effect = useEffect(getter, {
 		lazy: true,
 		scheduler: (cb) => {
 			cb();
 			if (!dirty) {
 				dirty = true;
-				execute(obj, "value");
+				trigger(obj, "value");
 			}
 		},
 	});
@@ -204,7 +206,7 @@ console.log(computedData.value);
 function watch(
 	source: unknown,
 	cb: (oldValue: unknown, newValue: unknown, onInvalidate: Function) => unknown,
-	options: { immediate: boolean; flush: "pre" | "post" | "sync" } = { immediate: false, flush: "sync" }
+	options: { immediate?: boolean; flush?: "pre" | "post" | "sync" } = { immediate: false, flush: "sync" }
 ) {
 	let getter;
 	if (typeof source === "function") {
@@ -213,17 +215,16 @@ function watch(
 		getter = () => traverse(source);
 	}
 
+	// for avoiding racing problems
 	let cleanup;
 	function onInvalidate(cb: (...args: unknown[]) => unknown) {
 		cleanup = cb;
 	}
-
 	let oldValue, newValue;
 	const job = () => {
 		if (cleanup) {
 			cleanup();
 		}
-
 		newValue = effectFn();
 		cb(oldValue, newValue, onInvalidate);
 		oldValue = newValue;
@@ -231,7 +232,7 @@ function watch(
 	const effectFn = useEffect(() => getter(), {
 		scheduler: () => {
 			if (options.flush === "post") {
-				p.then(job);
+				Promise.resolve().then(job);
 			} else {
 				job();
 			}
@@ -241,7 +242,7 @@ function watch(
 	if (options.immediate) {
 		job();
 	} else {
-		oldValue = effectFn();
+		effectFn();
 	}
 }
 function traverse(value: unknown, seen = new Set()) {
@@ -254,5 +255,29 @@ function traverse(value: unknown, seen = new Set()) {
 	}
 	return value;
 }
+
+const testWatch = defineReactive({ data: 1 });
+let res = "";
+watch(
+	() => testWatch.data,
+	async (oldValue, newValue, onInvalidate) => {
+		// oldValue;
+		// newValue;
+		let expired = false;
+		onInvalidate(() => (expired = true));
+
+		const d = await new Promise<string>((r) => setTimeout(() => r(newValue as string), 0));
+		if (!expired) {
+			res = d;
+		}
+	},
+	{ immediate: true, flush: "post" }
+);
+
+testWatch.data++;
+setTimeout(() => {
+	testWatch.data++;
+	res;
+}, 100);
 
 export {};
