@@ -24,6 +24,6 @@ export function countSubstrings(s: string): number {
 	return count;
 }
 
-let result = countSubstrings("abc");
+let result = countSubstrings('abc');
 
 result;
