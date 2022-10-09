@@ -1,6 +1,14 @@
+describe('countSubstrings', () => {
+	it.each`
+		s        | expected
+		${'abc'} | ${3}
+	`('should passed', ({ s, expected }) => {
+		expect(countSubstrings(s)).toBe(expected);
+	});
+});
+
 export function countSubstrings(s: string): number {
 	let count = 0;
-
 	for (let i = 0; i < s.length; i++) {
 		let l = i,
 			r = i;
@@ -20,10 +28,5 @@ export function countSubstrings(s: string): number {
 			r++;
 		}
 	}
-
 	return count;
 }
-
-let result = countSubstrings('abc');
-
-result;
