@@ -1,11 +1,11 @@
-describe('Promise.all', () => {
-	it('should return a list of resolved value', async () => {
+describe("Promise.all", () => {
+	it("should return a list of resolved value", async () => {
 		const results = await all([Promise.resolve(1), 2]);
 		expect(results).toEqual([1, 2]);
 	});
 
-	it('should reject', () => {
-		return expect(all([Promise.reject('2')])).rejects.toEqual('2');
+	it("should reject", () => {
+		return expect(all([Promise.reject("2")])).rejects.toEqual("2");
 	});
 });
 

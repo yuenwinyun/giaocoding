@@ -107,9 +107,9 @@ function defineReactive<T extends object>(obj: T) {
 	});
 }
 
-let runTrace = '';
-const context = { name: 'context' };
-const reactiveDataForTestingBranching = defineReactive({ foo: 'foo', bar: 'bar', ok: true });
+let runTrace = "";
+const context = { name: "context" };
+const reactiveDataForTestingBranching = defineReactive({ foo: "foo", bar: "bar", ok: true });
 useEffect(() => {
 	context.name = reactiveDataForTestingBranching.ok
 		? reactiveDataForTestingBranching.foo
@@ -117,7 +117,7 @@ useEffect(() => {
 });
 context;
 reactiveDataForTestingBranching.ok = false;
-reactiveDataForTestingBranching.foo = 'foo updated';
+reactiveDataForTestingBranching.foo = "foo updated";
 context;
 
 const reactiveDataForTestingSelfIncrement = defineReactive({ count: 1 });
@@ -129,7 +129,7 @@ reactiveDataForTestingSelfIncrement;
 reactiveDataForTestingSelfIncrement.count = 1;
 reactiveDataForTestingSelfIncrement;
 
-runTrace = '';
+runTrace = "";
 const testScheduler = defineReactive({ count: 1 });
 useEffect(
 	() => {
@@ -142,7 +142,7 @@ useEffect(
 		},
 	},
 );
-runTrace += 'ended;\n';
+runTrace += "ended;\n";
 testScheduler.count++;
 testScheduler.count++;
 runTrace;
@@ -158,11 +158,11 @@ function computed<T extends {}>(getter: () => T) {
 		get value() {
 			// compute result again if value is dirty
 			if (dirty) {
-				console.log('called');
+				console.log("called");
 				value = effect?.() as T;
 				dirty = false;
 			}
-			track(obj, 'value');
+			track(obj, "value");
 			return value;
 		},
 	};
@@ -174,7 +174,7 @@ function computed<T extends {}>(getter: () => T) {
 			cb();
 			if (!dirty) {
 				dirty = true;
-				trigger(obj, 'value');
+				trigger(obj, "value");
 			}
 		},
 	});
@@ -182,14 +182,14 @@ function computed<T extends {}>(getter: () => T) {
 	return obj;
 }
 
-runTrace = '';
+runTrace = "";
 const testComputed = defineReactive({ data: 1 });
 const computedData = computed(() => testComputed.data + 2);
 console.log(computedData.value);
 const effectFn = useEffect(
 	() => {
 		runTrace += `${testComputed.data};\n`;
-		return 'YES';
+		return "YES";
 	},
 	{ lazy: true },
 );
@@ -206,10 +206,10 @@ console.log(computedData.value);
 function watch(
 	source: unknown,
 	cb: (oldValue: unknown, newValue: unknown, onInvalidate: Function) => unknown,
-	options: { immediate?: boolean; flush?: 'pre' | 'post' | 'sync' } = { immediate: false, flush: 'sync' },
+	options: { immediate?: boolean; flush?: "pre" | "post" | "sync" } = { immediate: false, flush: "sync" },
 ) {
 	let getter;
-	if (typeof source === 'function') {
+	if (typeof source === "function") {
 		getter = source;
 	} else {
 		getter = () => traverse(source);
@@ -231,7 +231,7 @@ function watch(
 	};
 	const effectFn = useEffect(() => getter(), {
 		scheduler: () => {
-			if (options.flush === 'post') {
+			if (options.flush === "post") {
 				Promise.resolve().then(job);
 			} else {
 				job();
@@ -246,7 +246,7 @@ function watch(
 	}
 }
 function traverse(value: unknown, seen = new Set()) {
-	if (typeof value !== 'object' || value === null || seen.has(value)) {
+	if (typeof value !== "object" || value === null || seen.has(value)) {
 		return;
 	}
 	seen.add(value);
@@ -257,7 +257,7 @@ function traverse(value: unknown, seen = new Set()) {
 }
 
 const testWatch = defineReactive({ data: 1 });
-let res = '';
+let res = "";
 watch(
 	() => testWatch.data,
 	async (oldValue, newValue, onInvalidate) => {
@@ -271,7 +271,7 @@ watch(
 			res = d;
 		}
 	},
-	{ immediate: true, flush: 'post' },
+	{ immediate: true, flush: "post" },
 );
 
 testWatch.data++;

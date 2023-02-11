@@ -64,14 +64,43 @@
  */
 
 // @lc code=start
-class Node {}
+class TrieNode {
+	children = new Map<string, TrieNode>();
+	isEnd = false;
+}
 
 class WordDictionary {
-	constructor() {}
+	root = new TrieNode();
 
-	addWord(word: string): void {}
+	addWord(word: string): void {
+		let node = this.root;
+		for (const w of word) {
+			const hasNode = !!node.children.has(w);
+			if (!hasNode) node.children.set(w, new TrieNode());
+			node = node.children.get(w)!;
+		}
+		node.isEnd = true;
+	}
 
-	search(word: string): boolean {}
+	search(word: string, node = this.root): boolean {
+		let cur: string | undefined;
+		let wordList = word.split("");
+		while ((cur = wordList.shift())) {
+			if (cur === ".") {
+				for (const [_, m] of node.children) {
+					if (this.search(wordList.join(""), m)) {
+						return true;
+					}
+				}
+				return false;
+			} else if (!node.children.has(cur)) {
+				return false;
+			} else {
+				node = node.children.get(cur)!;
+			}
+		}
+		return node.isEnd;
+	}
 }
 
 /**
@@ -81,3 +110,5 @@ class WordDictionary {
  * var param_2 = obj.search(word)
  */
 // @lc code=end
+
+export {};

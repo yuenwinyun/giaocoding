@@ -1,8 +1,8 @@
-describe('countSubstrings', () => {
+describe("countSubstrings", () => {
 	it.each`
 		s        | expected
-		${'abc'} | ${3}
-	`('should passed', ({ s, expected }) => {
+		${"abc"} | ${3}
+	`("should passed", ({ s, expected }) => {
 		expect(countSubstrings(s)).toBe(expected);
 	});
 });

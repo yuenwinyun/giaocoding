@@ -9,7 +9,7 @@ class TrieNode {
 	children = new Map<string, TrieNode>();
 	isEnd = false;
 
-	constructor(s = '~') {}
+	constructor(s = "~") {}
 }
 
 class Trie {
@@ -64,6 +64,6 @@ class Trie {
 // use cases: spell checker, auto complete,
 
 let trie = new Trie();
-trie.insert('apple');
-let res = trie.search('apple');
+trie.insert("apple");
+let res = trie.search("apple");
 res;

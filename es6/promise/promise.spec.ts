@@ -1,12 +1,12 @@
 class PromiseImpl<T = unknown> {
-	#state: 'pending' | 'fulfilled' | 'rejected';
+	#state: "pending" | "fulfilled" | "rejected";
 
 	constructor(executor: (resolver: (value: T) => void, reject: (reason: Error) => void) => void) {
-		this.#state = 'pending';
+		this.#state = "pending";
 	}
 
 	#changeState() {
-		if (this.#state !== 'pending') {
+		if (this.#state !== "pending") {
 			return;
 		}
 	}
@@ -14,8 +14,8 @@ class PromiseImpl<T = unknown> {
 	then() {}
 }
 
-describe('PromiseImpl', () => {
-	it('ok', () => {
+describe("PromiseImpl", () => {
+	it("ok", () => {
 		const promise = new PromiseImpl(() => {});
 		expect(typeof promise).toBe(typeof new Promise(() => {}));
 		expect(promise.then).toEqual(expect.any(Function));
