@@ -9,7 +9,7 @@ class TrieNode {
 	children = new Map<string, TrieNode>();
 	isEnd = false;
 
-	constructor(s = "~") {}
+	constructor() {}
 }
 
 class Trie {
@@ -18,9 +18,8 @@ class Trie {
 	insert(word: string): void {
 		let node: TrieNode | undefined = this.root;
 		for (const w of word) {
-			w;
 			if (!node?.children.has(w)) {
-				node?.children.set(w, new TrieNode(w));
+				node?.children.set(w, new TrieNode());
 			}
 			node = node?.children.get(w);
 		}
@@ -62,8 +61,4 @@ class Trie {
 // @lc code=end
 
 // use cases: spell checker, auto complete,
-
-let trie = new Trie();
-trie.insert("apple");
-let res = trie.search("apple");
-res;
+export {};
