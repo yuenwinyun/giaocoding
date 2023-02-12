@@ -1,0 +1,17 @@
+SOLID are five design principles intended to make OO designs more understandable, flexibly, and maintainable.
+The ideas are:
+
+1️⃣ Single-responsibility Principle
+Every class should have only one responsibility, split into other classes if there is another scope of functionality.
+
+2️⃣ Open-closed Principle
+open for extension, closed for modification, which means we should not modify any existing codes(class) for adding new features.
+
+3️⃣ Liskov substitution Principle
+the used class should be able to be replaced by derived class without issues.
+
+4️⃣ Interface segregation Principle
+clients shouldn't be forced to implement the methods they don't use
+
+5️⃣ Dependency inversion Principle
+depend upon abstractions, rather than concretions
