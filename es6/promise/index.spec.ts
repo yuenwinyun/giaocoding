@@ -31,21 +31,36 @@ describe("CustomPromise", () => {
 	const OriginalPromise = Promise;
 	const MyPromise = CustomPromise;
 
-	it("ok", () => {
+	it("should be able to use constructor", async () => {
 		expect(() => {
 			// @ts-ignore
-			new OriginalPromise();
+			return new OriginalPromise();
 		}).toThrow(Error);
 
-		// expect(() => {
-		// 	// @ts-ignore
-		// 	new MyPromise();
-		// }).toThrow(Error);
+		expect(() => {
+			// @ts-ignore
+			return new MyPromise();
+		}).not.toThrow(Error);
+
+		await expect(() => new OriginalPromise(() => {})).not.toThrowError();
+		await expect(() => new MyPromise(() => {})).not.toThrowError();
 	});
+
+	it("should be resolved", () => {
+		let isResolved = false;
+	});
+
+	it("should be rejected", () => {});
+
+	it("should");
 });
 
 export {};
 
-const p = new Promise(() => {});
+// const p = new Promise((re, rj) => {
+// 	throw new Error("1");
+// });
 
-p.then(r => r).catch(e => e);
+// const r = async () => {
+// 	await p.then(r => r).catch(e => console.log(e));
+// }
